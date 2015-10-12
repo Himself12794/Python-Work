@@ -58,15 +58,21 @@ class Matrix:
 	def randomMatrix( self, m = 3, n = 3, v = 10 ):
 		'''Generates an m*n matrix with values between -v and v'''
 		temp = []
-		for i in range( m ):
+		for _ in range( m ):
 			tempRow = []
-			for i2 in range( n ):
+			for _ in range( n ):
 				tempRow.append( randint( -v, v ) )
 			temp.append( tempRow )
 			
 		self._matrix = temp
 		self._m = m
 		self._n = n
+	
+	@staticmethod	
+	def identityMatrix( n ):
+		
+		iMatrix = Matrix( n )
+		return iMatrix
 
 	def _identityMatrix( self, n ):
 		'''Generates the n identity matrix'''
@@ -103,9 +109,9 @@ class Matrix:
 		
 	def _findPivot( self, row ):
 		'''Internal use: finds the column id of the pivot position in a row'''
-		for id, value in enumerate( row ):
+		for index, value in enumerate( row ):
 			if value != 0:
-				return id
+				return index
 		return None
 	
 		
@@ -161,16 +167,16 @@ class Matrix:
 		copy.sort()
 		copy.reverse()
 		
-		for id in range( len( copy ) ):
-			pivot_column = self._findPivot( copy[ id ] )
+		for index in range( len( copy ) ):
+			pivot_column = self._findPivot( copy[ index ] )
 			if pivot_column == None:
 				continue
-			pivot = copy[ id ][ pivot_column ]
+			pivot = copy[ index ][ pivot_column ]
 			
-			for i in range( id + 1, len( copy ) ):
+			for i in range( index + 1, len( copy ) ):
 				if not self._checkBlank( copy[ i ] ):
 					below = copy[ i ][ pivot_column ]
-					addend = self._rowMultiply( copy[ id ], -below )
+					addend = self._rowMultiply( copy[ index ], -below )
 					addend = self._rowDivide( addend, pivot )
 					copy[ i ] = self._rowAdd( addend, copy[ i ] )
 				else:
@@ -190,15 +196,15 @@ class Matrix:
 			copy.sort()
 			copy.reverse()
 			
-			for id in range( len( copy ) ):
-				pivot_column = self._findPivot( copy[ id ] )
+			for index in range( len( copy ) ):
+				pivot_column = self._findPivot( copy[ index ] )
 				if pivot_column == None:
 					continue
-				pivot = copy[ id ][ pivot_column ]
-				copy[ id ] = self._rowDivide( copy[ id ], pivot )
-				for i in range( id + 1, len( copy ) ):
+				pivot = copy[ index ][ pivot_column ]
+				copy[ index ] = self._rowDivide( copy[ index ], pivot )
+				for i in range( index + 1, len( copy ) ):
 					if not self._checkBlank( copy[ i ] ):
-						addend = self._rowMultiply( copy[ id ], -copy[ i ][ pivot_column ] )
+						addend = self._rowMultiply( copy[ index ], -copy[ i ][ pivot_column ] )
 						copy[ i ] = self._rowAdd( addend , copy[ i ] )
 		
 			copy.sort()
@@ -214,14 +220,14 @@ class Matrix:
 		else:
 			self.ref()
 			copy = self._matrix[ : ]
-			for id in reversed( range( len( copy ) ) ):
-				pivot_column = self._findPivot( copy[ id ] )
+			for index in reversed( range( len( copy ) ) ):
+				pivot_column = self._findPivot( copy[ index ] )
 				if not pivot_column:
 					continue
 				
-				for i in reversed( range( id ) ):
+				for i in reversed( range( index ) ):
 					if not self._checkBlank( copy[ i ] ):
-						copy[ i ] = self._rowAdd( self._rowMultiply( copy[ id ], -copy[ i ][ pivot_column ] ), copy[ i ] )
+						copy[ i ] = self._rowAdd( self._rowMultiply( copy[ index ], -copy[ i ][ pivot_column ] ), copy[ i ] )
 			
 			self._matrix = copy
 	
@@ -286,7 +292,7 @@ class Matrix:
 		'''Solves the homogenous equation Ax=0'''
 		other = Matrix( self._matrix )
 		col = []
-		for i in xrange( self._m ):
+		for _ in range( self._m ):
 			col.append( 0 )
 			
 		other.addColumn(col)
@@ -299,8 +305,8 @@ class Matrix:
 			dupe = self._matrix
 			if ( self._n == other._n ) and ( self._m == other._m ):
 				for i in range( self._m ):
-					for id, amount in enumerate( other._matrix[ i ] ):
-						dupe[ i ][ id ] += amount
+					for index, amount in enumerate( other._matrix[ i ] ):
+						dupe[ i ][ index ] += amount
 
 				return Matrix( dupe )
 			else:
@@ -313,8 +319,8 @@ class Matrix:
 			dupe = self._matrix
 			if ( self._n == other._n ) and ( self._m == other._m ):
 				for i in range( self._m ):
-					for id, amount in enumerate( other._matrix[ i ] ):
-						dupe[ i ][ id ] -= amount
+					for index, amount in enumerate( other._matrix[ i ] ):
+						dupe[ i ][ index ] -= amount
 
 				return Matrix( dupe )
 			else:
@@ -329,13 +335,13 @@ class Matrix:
 				for i in range( self._m ):
 					row = []
 					for i2 in range( other._n ):
-						sum = 0
+						value = 0
 						for i3 in range( self._n ):
 							factor1 = self._matrix[ i ][ i3 ]
 							factor2 = other._matrix[ i3 ][ i2 ]
 							addend = factor1 * factor2
-							sum += addend
-						row.append( sum )
+							value += addend
+						row.append( value )
 					new.append( row )
 				
 				return Matrix( new )
@@ -373,7 +379,7 @@ class Matrix:
 				
 		elif exponent >= 1:
 			product = 1
-			for i in range( exponent ):
+			for _ in range( exponent ):
 				product = product * self
 			return product
 
@@ -394,8 +400,10 @@ class Matrix:
 			return self._matrix == other._matrix
 		else:
 			raise TypeError('Unsupported comparison for Matrix object and type \'%s\'' % type( other ).__name__ ) 
-		
+
+
 if __name__ == '__main__':
+	
 	#Testing Correct Matrix Initialization
 	A = [
 			[ 1, -4, 2 ],
