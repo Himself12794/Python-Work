@@ -4,3 +4,6 @@
 *.zip
 Assignment 1/
 *.pyc
+.metadata/
+.pydevproject
+.project
