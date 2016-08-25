@@ -29,7 +29,7 @@ class Fib:
         return result
     
     def __str__(self):
-        return self.toList().__str__()
+        return self._toList().__str__()
     
     def __getitem__(self, i):
         return self._toList()[i]
