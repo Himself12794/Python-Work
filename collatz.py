@@ -1,4 +1,4 @@
-import sys, requests
+import sys
 
 def collatz(start, limit=-1, cycles=1):
 	print(cycles, "-> ", int(start))
